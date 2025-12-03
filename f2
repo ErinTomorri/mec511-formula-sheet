@@ -1,0 +1,140 @@
+# MEC 511 – Thermodynamics & Fluids Cheatsheet
+
+## 1. Fluid Properties
+
+ρ = m / V  
+γ = ρ g  
+SG = ρ / ρ_water = γ / γ_water  
+
+p v = R T  
+p = ρ R T  
+
+τ = μ (du/dy)  
+
+## 2. Fluid Statics
+
+p = p₀ + ρ g (z₀ − z)  
+p_abs = p_gage + p_atm  
+
+F_R = ρ g h_c A  
+h_cp = h_c + I_G / (h_c A)  
+
+### Representative Problems
+- Fluids Ch.1: P1.30, P1.34, P1.38 / P1.42  
+- Fluids Ch.2: multi‑fluid manometer; deep column pressure; hydrostatic gate
+
+## 3. Bernoulli & Continuity
+
+ṁ = ρ A V  
+A₁ V₁ = A₂ V₂ (incompressible)  
+
+p₁/(ρ g) + V₁²/(2 g) + z₁  
+= p₂/(ρ g) + V₂²/(2 g) + z₂  
+
+p₁/(ρ g) + V₁²/(2 g) + z₁ + h_p  
+= p₂/(ρ g) + V₂²/(2 g) + z₂ + h_t + h_L  
+
+z_EL = p/(ρ g) + V²/(2 g) + z  
+z_HGL = p/(ρ g) + z  
+
+### Representative Problems
+- P3.32, P3.48, P3.54, P3.66, P3.76  
+
+## 4. Control Volume – Mass
+
+d/dt ∫_CV ρ dV = Σṁ_in − Σṁ_out  
+
+Steady: Σṁ_in = Σṁ_out  
+
+### Representative Problems
+- P3.9, P3.10, 3‑pipe junction (Q8/9)
+
+## 5. Thermo – Basic Relations
+
+ΔE = Q − W  
+ΔE = ΔU + ΔKE + ΔPE  
+
+ΔPE = m g (z₂ − z₁)  
+ΔKE = (m/2)(V₂² − V₁²)  
+
+## 6. Closed System Work
+
+W = ∫ p dV  
+
+Polytropic: p vⁿ = const  
+
+W₁→₂ = (p₂ v₂ − p₁ v₁)/(1 − n),  n ≠ 1  
+Isobaric: W₁→₂ = p (V₂ − V₁)  
+Isochoric: W = 0  
+
+### Representative Problems
+- Polytropic + const‑p: pv¹·³ = const  
+- 2 kg system: Q, Δu, Δz → W  
+- Rigid, adiabatic tank with paddle wheel  
+- Piston‑cylinder with moving piston  
+- Cycles: ΣΔU = 0 → Q_cycle = W_cycle
+
+## 7. Pure Substances & Quality
+
+If v_f < v < v_g:
+
+x = (v − v_f) / (v_g − v_f)  
+
+u = u_f + x (u_g − u_f)  
+h = h_f + x (h_g − h_f)  
+
+Cycle efficiency:
+
+η_th = W_cycle / Q_in  
+
+### Representative Problems
+- P3.38, P3.48, P3.61, P3.67, P3.99, P3.105, P3.106  
+
+## 8. Ideal Gas Relations
+
+p v = R T  
+
+u₂ − u₁ = c_v (T₂ − T₁)  
+h₂ − h₁ = c_p (T₂ − T₁)  
+
+c_p − c_v = R  
+k = c_p / c_v  
+
+Polytropic ideal gas:
+
+T₂/T₁ = (p₂/p₁)^((n−1)/n)
+
+## 9. Steady‑Flow Devices
+
+General:
+
+Q̇ − Ẇ = ṁ [ (h₂ − h₁) + (V₂² − V₁²)/2 + g (z₂ − z₁) ]
+
+Nozzle/diffuser (adiabatic, no Ẇ):
+
+h₁ + V₁²/2 = h₂ + V₂²/2  
+
+Turbine (adiabatic, no KE/PE):
+
+Ẇ = ṁ (h₁ − h₂)  
+
+Compressor (adiabatic, no KE/PE):
+
+Ẇ = ṁ (h₂ − h₁)  
+
+Mixing (adiabatic, no Ẇ):
+
+Σṁ_in = ṁ_out  
+Σ(ṁ_in h_in) = ṁ_out h_out  
+
+Throttling (adiabatic, no Ẇ, KE/PE ≈ 0):
+
+h₁ = h₂  
+
+Ideal gas mass flow:
+
+ṁ = ρ A V = (p A V)/(R T)
+
+### Representative Problems
+- P4.10, P4.19, P4.20, P4.22  
+- P4.32, P4.34, P4.62, P4.68
