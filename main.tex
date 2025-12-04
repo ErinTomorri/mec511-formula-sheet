@@ -1,0 +1,748 @@
+\documentclass[7pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=0.35cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{multicol}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{array}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\setlength{\columnsep}{0.15cm}
+\renewcommand{\baselinestretch}{0.92}
+
+\setlist{nosep,leftmargin=*,topsep=0pt,partopsep=0pt}
+
+\titlespacing*{\section}{0pt}{0.6ex}{0.3ex}
+\titlespacing*{\subsection}{0pt}{0.35ex}{0.2ex}
+\titleformat*{\section}{\scriptsize\bfseries}
+\titleformat*{\subsection}{\tiny\bfseries}
+
+\begin{document}
+\tiny
+
+\begin{center}
+\textbf{\small MEC 511 -- FLUIDS Cheatsheet (Page 1/2) -- Erin Tomorri 501236724}
+\end{center}
+
+\begin{multicols*}{3}
+
+%================================================
+\section*{0. Fluid Variables \& SI Units}
+
+\begin{tabular}{@{}lll@{}}
+\textbf{Var} & \textbf{Name} & \textbf{SI Unit} \\
+$\rho$ & density & kg/m$^3$ \\
+$v$ & specific volume & m$^3$/kg \\
+$\gamma$ & specific weight & N/m$^3$ \\
+$\mathrm{SG}$ & specific gravity & -- \\
+$p$ & pressure & Pa (N/m$^2$) \\
+$p_{\text{abs}}$ & absolute pressure & Pa \\
+$p_{\text{gage}}$ & gauge pressure & Pa \\
+$p_{\text{atm}}$ & atmospheric press. & Pa \\
+$\mu$ & dynamic viscosity & Pa$\cdot$s \\
+$\nu$ & kinematic viscosity & m$^2$/s \\
+$\tau$ & shear stress & Pa \\
+$V$ & velocity & m/s \\
+$Q$ & volume flow rate & m$^3$/s \\
+$\dot{m}$ & mass flow rate & kg/s \\
+$g$ & gravity & m/s$^2$ \\
+$z$ & elevation & m \\
+$h$ & head & m \\
+$h_c$ & centroid depth & m \\
+$h_{cp}$ & center of pressure & m \\
+$h_L$ & head loss & m \\
+$h_p$ & pump head & m \\
+$h_t$ & turbine head & m \\
+$f$ & Darcy friction factor & -- \\
+$K_L$ & loss coefficient & -- \\
+$D$ & diameter & m \\
+$L$ & length & m \\
+$A$ & area & m$^2$ \\
+$I_G$ & 2nd moment of area & m$^4$ \\
+$F$ & force & N \\
+$F_R$ & resultant force & N \\
+$\dot{W}$ & power & W (J/s) \\
+$\eta_p$ & pump efficiency & -- \\
+$\text{Re}$ & Reynolds number & -- \\
+$\text{Fr}$ & Froude number & -- \\
+$\text{Ma}$ & Mach number & -- \\
+\end{tabular}
+
+\textbf{Shape Formulas:}
+
+\begin{tabular}{@{}ll@{}}
+\multicolumn{2}{l}{\textit{Area:}} \\
+Rectangle & $A = bh$ \\
+Circle & $A = \pi r^2 = \frac{\pi D^2}{4}$ \\
+Triangle & $A = \frac{1}{2}bh$ \\
+Trapezoid & $A = \frac{1}{2}(b_1 + b_2)h$ \\
+\multicolumn{2}{l}{\textit{2nd Moment $I_G$ (about centroid):}} \\
+Rectangle & $I_G = \frac{bh^3}{12}$ \\
+Circle & $I_G = \frac{\pi D^4}{64} = \frac{\pi r^4}{4}$ \\
+Triangle & $I_G = \frac{bh^3}{36}$ \\
+\end{tabular}
+
+%================================================
+\section*{1. Fluid Properties \& Definitions}
+
+\textit{A fluid continuously deforms under shear stress; it cannot resist shear at rest. The continuum assumption treats fluids as continuous matter (valid when molecular mean free path $\ll$ system length scale).}
+
+\begin{align*}
+\rho &= \frac{m}{V} && \text{density: mass per unit volume} \\
+v &= \frac{1}{\rho} && \text{specific vol.: inverse of density} \\
+\gamma &= \rho g && \text{spec. weight: weight per volume} \\
+\mathrm{SG} &= \frac{\rho}{\rho_{\text{water}}} && \text{spec. gravity: ratio to water density}
+\end{align*}
+
+\textbf{Viscosity \& Shear:}
+\begin{align*}
+\tau &= \frac{F_{\text{shear}}}{A} && \text{shear stress: tangential force/area} \\
+\tau &= \mu \frac{du}{dy} && \text{Newton's law: stress $\propto$ velocity gradient} \\
+\nu &= \frac{\mu}{\rho} && \text{kinematic viscosity: $\mu$ scaled by $\rho$}
+\end{align*}
+
+\textbf{Strategy -- Fluid Properties:} 
+\begin{enumerate}[nosep]
+\item Convert all units to SI (Pa, m, kg, s).
+\item If gauge $p$: $p_{\text{abs}} = p_{\text{gage}} + p_{\text{atm}}$ (use 101.325 kPa for $p_{\text{atm}}$).
+\item Density: $\rho = m/V$ or $\rho = \text{SG} \times \rho_{\text{water}}$ (1000 kg/m$^3$).
+\item Specific volume: $v = 1/\rho = V/m$.
+\item For viscosity: $\tau = \mu(du/dy)$; flat plates: $du/dy \approx V/h_{\text{gap}}$.
+\item Force on plate: $F = \tau \times A = \mu(V/h)A$.
+\item Kinematic visc: $\nu = \mu/\rho$; look for $\mu$ or $\nu$ in problem.
+\item Check units: 1 Pa$\cdot$s = 1 N$\cdot$s/m$^2$ = 1 kg/(m$\cdot$s).
+\end{enumerate}
+
+%================================================
+\section*{2. Fluid Statics}
+
+\textit{In a static fluid, pressure varies only with depth. Horizontal planes have constant pressure. Pressure acts normal to any surface.}
+
+\begin{align*}
+p &= p_0 + \rho g(z_0 - z) && \text{hydrostatic: $p$ increases with depth} \\
+p_{\text{abs}} &= p_{\text{gage}} + p_{\text{atm}} && \text{absolute = gauge + atmospheric} \\
+\Delta p &= \rho g h && \text{pressure difference over height $h$}
+\end{align*}
+
+\textbf{Forces on Submerged Surfaces:}
+\begin{align*}
+F_R &= \rho g h_c A && \text{resultant force: pressure at centroid $\times$ area} \\
+h_{cp} &= h_c + \frac{I_G}{h_c A} && \text{center of pressure: always below centroid}
+\end{align*}
+
+\textit{$h_c$ = vertical depth to centroid; $I_G$ = 2nd moment of area about centroid axis parallel to surface.}
+
+\textbf{Pressure Conversions:}
+$1\,\text{atm} = 101.325\,\text{kPa} = 760\,\text{mmHg} = 14.7\,\text{psi}$
+
+\textbf{Strategy -- Hydrostatic Forces:}
+\begin{enumerate}[nosep]
+\item Sketch setup; ID submerged surface (gate, plate, wall).
+\item Find centroid depth $h_c$ (vertical from free surface to centroid).
+\item Calc area $A$: rectangle $bh$, circle $\pi D^2/4$, triangle $bh/2$.
+\item Calc $F_R = \rho g h_c A$ (force acts $\perp$ to surface); use $\rho = 1000$ kg/m$^3$ for water.
+\item Find $I_G$ about centroid: rectangle $bh^3/12$; circle $\pi D^4/64$; triangle $bh^3/36$.
+\item Calc $h_{cp} = h_c + I_G/(h_c A)$ (always $> h_c$; center of pressure below centroid).
+\item For moments: $M = F_R \times d$ where $d$ = dist. from pivot/hinge to $h_{cp}$.
+\item Sum moments about hinge/pivot: $\sum M = 0$ for equilibrium; solve for unknown force.
+\item Look for: fluid depth $h$, gate width $b$, hinge location, external forces.
+\end{enumerate}
+
+\textbf{Strategy -- Manometer:}
+\begin{enumerate}[nosep]
+\item Start at known $p$ (often open to atm: $p = p_{\text{atm}} = 101.325$ kPa).
+\item Move through fluid: down adds $\rho gh$; up subtracts $\rho gh$; use $\Delta p = \rho gh$.
+\item At interface between fluids: $p$ is continuous (same on both sides).
+\item Write equation: $p_1 + \rho_1 g h_1 - \rho_2 g h_2 + \cdots = p_2$.
+\item Look for: fluid densities ($\rho$ or SG), height differences ($h$), mercury (SG=13.6).
+\item Solve for unknown $p$ or $h$; convert to gauge if needed: $p_{\text{gage}} = p_{\text{abs}} - p_{\text{atm}}$.
+\end{enumerate}
+
+%================================================
+\section*{3. Continuity \& Bernoulli}
+
+\textit{Continuity: mass is conserved. Bernoulli: energy conservation along a streamline for steady, incompressible, inviscid flow.}
+
+\begin{align*}
+\dot{m} &= \rho A V && \text{mass flow rate through cross-section} \\
+Q &= A V && \text{volume flow rate (incompressible)} \\
+A_1 V_1 &= A_2 V_2 && \text{continuity: what goes in must come out}
+\end{align*}
+
+\textbf{Bernoulli (inviscid, no devices):}
+\[
+\frac{p_1}{\rho g} + \frac{V_1^2}{2g} + z_1 = \frac{p_2}{\rho g} + \frac{V_2^2}{2g} + z_2
+\]
+\textit{Each term = head (m): pressure head + velocity head + elevation head = constant.}
+
+\textbf{With pump/turbine/losses:}
+\[
+\frac{p_1}{\rho g} + \frac{V_1^2}{2g} + z_1 + h_p = \frac{p_2}{\rho g} + \frac{V_2^2}{2g} + z_2 + h_t + h_L
+\]
+\textit{$h_p$ = pump head added; $h_t$ = turbine head extracted; $h_L$ = friction/minor losses.}
+
+\textbf{Energy/Hydraulic Grade Lines:}
+\begin{align*}
+\text{EL} &= \frac{p}{\rho g} + \frac{V^2}{2g} + z && \text{total head (constant if no loss)} \\
+\text{HGL} &= \frac{p}{\rho g} + z && \text{piezometric head (EL $-$ velocity head)}
+\end{align*}
+
+\textbf{Strategy -- Bernoulli \& Continuity:}
+\begin{enumerate}[nosep]
+\item Pick two points on same streamline (e.g., tank surface and outlet).
+\item Check assumptions: steady, incompressible, inviscid (or include $h_L$).
+\item Write continuity: $A_1V_1 = A_2V_2$ or $\dot{m}_1 = \rho_1A_1V_1 = \rho_2A_2V_2$.
+\item Write Bernoulli: $p_1/(\rho g) + V_1^2/(2g) + z_1 = p_2/(\rho g) + V_2^2/(2g) + z_2 + h_L$.
+\item Apply simplifications:
+  \begin{itemize}[nosep]
+  \item Large tank/reservoir: $V \approx 0$ at surface
+  \item Open to atmosphere: $p = p_{\text{atm}}$ (set to 0 gauge)
+  \item Same elevation: $z_1 = z_2$
+  \item Jet exit to atmosphere: $p = p_{\text{atm}} = 0$ gauge
+  \end{itemize}
+\item For area: circle $A = \pi D^2/4$; if diameter changes: $V_2/V_1 = (D_1/D_2)^2$.
+\item Substitute continuity: $V_2 = V_1(A_1/A_2)$ into Bernoulli.
+\item Solve for unknown ($V$, $p$, $Q$, or $h$); $Q = AV$.
+\item Pitot tube: stagnation $\to$ $V = \sqrt{2\Delta p/\rho} = \sqrt{2gh}$ if manometer.
+\item Venturi: throat velocity $V_2 > V_1$; pressure drops at throat.
+\item Look for: diameters $D_1$, $D_2$; elevations $z$; pressures $p$; flow rate $Q$.
+\end{enumerate}
+
+%================================================
+\section*{4. Reynolds Number \& Flow Regimes}
+
+\textit{Re compares inertial forces to viscous forces. Low Re = viscous-dominated (laminar); high Re = inertia-dominated (turbulent).}
+
+\begin{align*}
+\mathrm{Re} &= \frac{\rho V D}{\mu} = \frac{VD}{\nu} && \text{Reynolds number}
+\end{align*}
+
+\textbf{Pipe flow:} Laminar: $\mathrm{Re} < 2300$; Turbulent: $\mathrm{Re} > 4000$; Transition in between.
+
+%================================================
+\section*{5. Pipe Flow \& Head Loss}
+
+\textit{Real flows have friction losses. Major losses occur along pipe length; minor losses at fittings, bends, valves.}
+
+\textbf{Darcy--Weisbach (major loss):}
+\[
+h_L = f \frac{L}{D} \frac{V^2}{2g}
+\]
+\textit{$f$ = Darcy friction factor; $L$ = pipe length; $D$ = diameter.}
+
+\textbf{Minor losses:}
+\[
+h_{L,\text{minor}} = K_L \frac{V^2}{2g}
+\]
+\textit{$K_L$ = loss coefficient from tables (entrance, exit, bends, valves).}
+
+\textbf{Total head loss:}
+\[
+h_L = \left(f\frac{L}{D} + \sum K_L\right)\frac{V^2}{2g}
+\]
+
+\textbf{Friction factor:}
+\begin{align*}
+f &= \frac{64}{\mathrm{Re}} && \text{laminar (exact)} \\
+f &= 0.316\,\mathrm{Re}^{-0.25} && \text{turbulent, smooth (Blasius)}
+\end{align*}
+
+\textbf{Pump power:}
+\begin{align*}
+P_{\text{ideal}} &= \rho g Q h_p && \text{hydraulic power delivered to fluid} \\
+P_{\text{actual}} &= \frac{\rho g Q h_p}{\eta_p} && \text{shaft power input (accounts for losses)}
+\end{align*}
+
+\textbf{Strategy -- Pipe Flow:}
+\begin{enumerate}[nosep]
+\item Find velocity: $V = Q/A = 4Q/(\pi D^2)$ if $Q$ given.
+\item Calculate $\text{Re} = \rho VD/\mu = VD/\nu$ to find regime (look for $\mu$ or $\nu$).
+\item Determine friction factor:
+  \begin{itemize}[nosep]
+  \item Laminar ($\text{Re} < 2300$): $f = 64/\text{Re}$ (exact)
+  \item Turbulent, smooth: $f = 0.316/\text{Re}^{0.25}$ (Blasius, $\text{Re} < 10^5$)
+  \item Turbulent, rough: use Moody chart with $\epsilon/D$ (roughness/diameter)
+  \end{itemize}
+\item Calculate major loss: $h_L = f(L/D)(V^2/2g)$ (friction along pipe length $L$).
+\item Add all minor losses: $h_{L,\text{minor}} = \sum K_L(V^2/2g)$ (entrance, exit, bends, valves).
+\item Total head loss: $h_{L,\text{total}} = [f(L/D) + \sum K_L](V^2/2g)$.
+\item Apply extended Bernoulli: $p_1/(\rho g) + V_1^2/(2g) + z_1 + h_p = p_2/(\rho g) + V_2^2/(2g) + z_2 + h_t + h_L$.
+\item If $Q$ or $V$ unknown: iterate (guess $V$, calc Re, find $f$, recalc $h_L$, check Bernoulli).
+\item Check units: $Q = AV$ (m$^3$/s); $\dot{m} = \rho Q$ (kg/s).
+\item Pump power: $P = \rho g Q h_p / \eta_p$ (W); if $\eta_p$ not given, assume ideal.
+\item Look for: pipe diameter $D$, length $L$, roughness $\epsilon$, $K_L$ values, pump/turbine.
+\end{enumerate}
+
+%================================================
+\section*{6. CV Momentum Equation}
+
+\textit{Forces on a CV = net momentum flux out. Used for forces on bends, nozzles, plates.}
+
+\[
+\sum F_x = \sum_{\text{out}} \dot{m} V_{x} - \sum_{\text{in}} \dot{m} V_{x}
+\]
+\textit{Apply separately for each direction. Include pressure forces ($pA$), reaction forces, and weight.}
+
+%================================================
+\section*{7. CV Mass Balance}
+
+\textit{Mass cannot be created or destroyed. Rate of change of mass in CV = net mass inflow.}
+
+\[
+\frac{dm_{\text{CV}}}{dt} = \sum \dot{m}_{\text{in}} - \sum \dot{m}_{\text{out}}
+\]
+
+\textbf{Steady state:} $\sum \dot{m}_{\text{in}} = \sum \dot{m}_{\text{out}}$
+
+\textbf{Strategy -- CV Mass Balance:}
+\begin{enumerate}[nosep]
+\item Draw control volume boundary around device/region.
+\item Apply: $dm_{\text{CV}}/dt = \sum\dot{m}_{\text{in}} - \sum\dot{m}_{\text{out}}$.
+\item At each port: $\dot{m} = \rho AV$ where $A = \pi D^2/4$ for circular.
+\item For incompressible: $\rho$ constant $\to$ $\sum Q_{\text{in}} = \sum Q_{\text{out}}$ where $Q = AV$.
+\item Steady state: $\sum\dot{m}_{\text{in}} = \sum\dot{m}_{\text{out}}$ (no accumulation).
+\item Look for: inlet/outlet diameters, velocities, flow rates; multiple inlets/outlets.
+\item Solve for unknown $\dot{m}$, $V$, or $Q$.
+\end{enumerate}
+
+\textbf{Strategy -- CV Momentum:}
+\begin{enumerate}[nosep]
+\item Draw CV and free body diagram with all forces (pressure, reaction, weight).
+\item Apply for each direction: $\sum F_x = \sum_{\text{out}}\dot{m}V_x - \sum_{\text{in}}\dot{m}V_x$ (same for $y$).
+\item Include: pressure forces $pA$ (gage pressure $\times$ area), reaction $F_R$, weight $mg$.
+\item Note: $V$ is velocity component in that direction; sign matters (+ or -).
+\item For jet on plate: $F = \dot{m}(V_{\text{out}} - V_{\text{in}})$; if plate stops jet: $F = \dot{m}V$.
+\item For pipe bend: account for $p_1A_1$, $p_2A_2$ at inlet/outlet, and reaction force.
+\item Look for: velocities, pressures, angles, areas at inlet/outlet.
+\item Solve for reaction force $F_R$ or required anchoring force.
+\end{enumerate}
+
+%================================================
+\section*{8. Quick Reference -- Fluids}
+
+\begin{tabular}{@{}ll@{}}
+$g$ & $9.81$ m/s$^2$ \\
+$p_{\text{atm}}$ & $101.325$ kPa (101,325 Pa) \\
+$\rho_{\text{water}}$ & $1000$ kg/m$^3$ (at 4$^\circ$C) \\
+$\rho_{\text{air}}$ & $1.2$ kg/m$^3$ (at STP) \\
+$\mu_{\text{water}}$ & $1.0 \times 10^{-3}$ Pa$\cdot$s (20$^\circ$C) \\
+$\nu_{\text{water}}$ & $1.0 \times 10^{-6}$ m$^2$/s (20$^\circ$C) \\
+$\mu_{\text{air}}$ & $1.8 \times 10^{-5}$ Pa$\cdot$s (20$^\circ$C) \\
+\end{tabular}
+
+\textbf{Unit Conversions:}
+\begin{itemize}[nosep]
+\item 1 Pa = 1 N/m$^2$ = 1 kg/(m$\cdot$s$^2$)
+\item 1 kPa = 1000 Pa
+\item 1 bar = 100 kPa
+\item 1 atm = 101.325 kPa = 14.7 psi
+\item 1 m$^3$/s = 1000 L/s
+\item Power: W = J/s = N$\cdot$m/s = Pa$\cdot$m$^3$/s
+\end{itemize}
+
+\textbf{Common Errors -- Fluids:}
+\begin{itemize}[nosep]
+\item Forgetting gauge $\to$ absolute pressure conversion.
+\item Using diameter instead of radius (or vice versa).
+\item Mixing up velocity head $V^2/2g$ with kinetic energy $V^2/2$.
+\item Wrong sign in momentum equation (in vs out).
+\item Forgetting to square velocity in head loss.
+\item Using wrong area in continuity ($A = \pi D^2/4$ for circle).
+\end{itemize}
+
+\end{multicols*}
+
+\newpage
+
+%================================================
+%        PAGE 2: THERMODYNAMICS
+%================================================
+
+\begin{center}
+\textbf{\small MEC 511 -- THERMODYNAMICS Cheatsheet (Page 2/2) -- Erin Tomorri 501236724}
+\end{center}
+
+\begin{multicols*}{3}
+
+%================================================
+\section*{0. Thermo Variables \& SI Units}
+
+\begin{tabular}{@{}lll@{}}
+\textbf{Var} & \textbf{Name} & \textbf{SI Unit} \\
+$m$ & mass & kg \\
+$V$ & volume & m$^3$ \\
+$T$ & temperature & K \\
+$p$ & pressure & Pa (N/m$^2$) \\
+$v$ & specific volume & m$^3$/kg \\
+$\rho$ & density & kg/m$^3$ \\
+$R$ & specific gas const. & J/(kg$\cdot$K) \\
+$R_u$ & universal gas const. & J/(kmol$\cdot$K) \\
+$n$ & number of moles & kmol \\
+$n$ & polytropic index & -- \\
+$k$ & specific heat ratio & -- \\
+$U$, $u$ & internal energy & J, J/kg \\
+$H$, $h$ & enthalpy & J, J/kg \\
+$S$, $s$ & entropy & J/K, J/(kg$\cdot$K) \\
+$Q$ & heat transfer & J \\
+$\dot{Q}$ & heat rate & W \\
+$W$ & work & J \\
+$\dot{W}$ & power & W \\
+$c_p$ & spec. heat (const $p$) & J/(kg$\cdot$K) \\
+$c_v$ & spec. heat (const $V$) & J/(kg$\cdot$K) \\
+$x$ & quality & -- \\
+$\eta$ & efficiency & -- \\
+$\eta_{\text{th}}$ & thermal efficiency & -- \\
+$\text{COP}$ & coeff. of performance & -- \\
+$T_H$ & high temperature & K \\
+$T_L$ & low temperature & K \\
+$Q_H$ & heat to hot reservoir & J \\
+$Q_L$ & heat from cold res. & J \\
+$v_f$ & sat. liquid spec. vol. & m$^3$/kg \\
+$v_g$ & sat. vapor spec. vol. & m$^3$/kg \\
+$v_{fg}$ & difference $v_g - v_f$ & m$^3$/kg \\
+$h_f$ & sat. liquid enthalpy & J/kg \\
+$h_g$ & sat. vapor enthalpy & J/kg \\
+$h_{fg}$ & enthalpy of vap. & J/kg \\
+\end{tabular}
+
+\textbf{Shape Formulas:}
+
+\begin{tabular}{@{}ll@{}}
+\multicolumn{2}{l}{\textit{Area \& Volume:}} \\
+Rectangle & $A = bh$ \\
+Circle & $A = \pi r^2 = \frac{\pi D^2}{4}$ \\
+Sphere & $V = \frac{4}{3}\pi r^3$, $A_s = 4\pi r^2$ \\
+Cylinder & $V = \pi r^2 L$, $A_s = 2\pi rL$ \\
+Cone & $V = \frac{1}{3}\pi r^2 h$ \\
+Rectangular & $V = L \times W \times H$ \\
+\end{tabular}
+
+%================================================
+\section*{1. Ideal Gas Law}
+
+\textbf{Ideal Gas:} \textit{Molecules have negligible volume and no intermolecular forces.}
+\begin{align*}
+pv &= RT && \text{per unit mass ($R$ = specific gas const.)} \\
+pV &= mRT && \text{total mass form} \\
+pV &= nR_uT && \text{molar form ($R_u = 8.314$ kJ/kmol$\cdot$K)} \\
+p &= \rho RT && \text{density form (rearranged)}
+\end{align*}
+
+\textbf{Strategy -- Ideal Gas:}
+\begin{enumerate}[nosep]
+\item Convert to SI: pressure (Pa or kPa), temperature (K), volume (m$^3$).
+\item If gauge pressure: $p_{\text{abs}} = p_{\text{gage}} + p_{\text{atm}}$ (101.325 kPa).
+\item If $^\circ$C given: $T(\text{K}) = T(^\circ\text{C}) + 273.15$.
+\item Apply $pV = mRT$ (total) or $pv = RT$ (specific) or $p = \rho RT$ (density form).
+\item For two states: $p_1V_1/T_1 = p_2V_2/T_2$ (constant mass).
+\item Solve for unknown ($m$, $\rho$, $T$, $p$, or $V$).
+\item Check: for air, $R = 0.287$ kJ/(kg$\cdot$K) = 287 J/(kg$\cdot$K).
+\item To ID gas: calculate $R = pv/T$ or $R = p/(\rho T)$ and compare to tables.
+\item Look for: gas name (gives $R$), mass $m$, volume $V$, temperature $T$, pressure $p$.
+\end{enumerate}
+
+%================================================
+\section*{2. First Law -- Closed System}
+
+\textit{Energy is conserved. Heat in minus work out equals change in total energy. Sign convention: $Q > 0$ into system; $W > 0$ out of system.}
+
+\begin{align*}
+\Delta E &= Q - W && \text{first law (energy balance)} \\
+\Delta E &= \Delta U + \Delta\text{KE} + \Delta\text{PE} \\
+\Delta\text{KE} &= \tfrac{m}{2}(V_2^2 - V_1^2) && \text{change in kinetic energy} \\
+\Delta\text{PE} &= mg(z_2 - z_1) && \text{change in potential energy}
+\end{align*}
+
+\textit{Often $\Delta$KE, $\Delta$PE $\approx 0$ for stationary closed systems.}
+
+\textbf{Strategy -- Closed System Energy:}
+\begin{enumerate}[nosep]
+\item Identify substance: ideal gas (use $pV=mRT$) or real (steam/water, use tables).
+\item Fix initial state using two independent properties ($p$, $T$, $v$, $u$, $h$, $s$).
+\item Identify process: isobaric ($p=$const), isochoric ($V=$const), isothermal ($T=$const), adiabatic ($Q=0$), polytropic ($pV^n=$const).
+\item Calculate work based on process (see Section 3): $W = \int p\,dV$.
+\item For ideal gas: $\Delta U = mc_v\Delta T$; $\Delta H = mc_p\Delta T$; use $c_v$ or $c_p$ from tables.
+\item For steam/water: look up $u_1$, $u_2$ (or $h_1$, $h_2$) from tables at state 1 and 2.
+\item Apply 1st law: $Q - W = \Delta U$ (or $Q = \Delta U + W$) if KE, PE negligible.
+\item Check signs: $Q > 0$ = heat in; $W > 0$ = work out of system.
+\item Rigid tank: $W = 0$ (no volume change) $\to$ $Q = \Delta U = m(u_2 - u_1)$.
+\item Look for: process type, initial/final states, $Q$ or $W$ given, rigid/piston.
+\end{enumerate}
+
+%================================================
+\section*{3. Boundary Work (Closed System)}
+
+\textit{Work = $\int p\,dV$. Depends on path (process). Area under $p$--$V$ curve.}
+
+\[
+W = \int p\,dV
+\]
+
+\textbf{Polytropic:} $pV^n = C$ (constant)
+\begin{align*}
+W &= \frac{p_2V_2 - p_1V_1}{1-n} && (n \neq 1) \\
+W &= p_1V_1\ln\frac{V_2}{V_1} && (n = 1,\text{ isothermal})
+\end{align*}
+
+\textbf{Special cases:}
+\begin{itemize}
+\item Isobaric ($p$ = const): $W = p(V_2 - V_1)$
+\item Isochoric ($V$ = const): $W = 0$
+\item Adiabatic ideal gas: $n = k$
+\end{itemize}
+
+\textbf{Polytropic relations (ideal gas):}
+\[
+\frac{T_2}{T_1} = \left(\frac{V_1}{V_2}\right)^{n-1} = \left(\frac{p_2}{p_1}\right)^{\frac{n-1}{n}}
+\]
+
+\textbf{Strategy -- Boundary Work:}
+\begin{enumerate}[nosep]
+\item Identify process from problem: isochoric, isobaric, isothermal, adiabatic, polytropic.
+\item For isochoric ($V$ = const): $W = 0$ immediately (no volume change).
+\item For isobaric ($p$ = const): $W = p(V_2 - V_1) = mR(T_2 - T_1)$ for ideal gas.
+\item For isothermal ($T$ = const, ideal gas): $W = p_1V_1\ln(V_2/V_1) = mRT\ln(V_2/V_1)$.
+\item For polytropic ($pV^n = C$): $W = (p_2V_2 - p_1V_1)/(1-n)$ if $n \neq 1$.
+\item For adiabatic ideal gas: use $n = k$ (specific heat ratio) in polytropic formula.
+\item Use polytropic relations: $T_2/T_1 = (V_1/V_2)^{n-1} = (p_2/p_1)^{(n-1)/n}$.
+\item Also: $p_1V_1^n = p_2V_2^n$ for polytropic process.
+\item Check: $W > 0$ = expansion (system does work); $W < 0$ = compression.
+\item Look for: process name, $n$ value, initial/final $p$, $V$, $T$.
+\end{enumerate}
+
+%================================================
+\section*{4. Ideal Gas Relations}
+
+\textit{For ideal gases: $u = u(T)$ only; $h = h(T)$ only. Changes depend only on $\Delta T$.}
+
+\begin{align*}
+\Delta u &= c_v(T_2 - T_1) && \text{internal energy change} \\
+\Delta h &= c_p(T_2 - T_1) && \text{enthalpy change} \\
+c_p - c_v &= R && \text{Mayer's relation} \\
+k &= c_p/c_v && \text{specific heat ratio}
+\end{align*}
+
+\textbf{Strategy -- Ideal Gas Calculations:}
+\begin{enumerate}[nosep]
+\item For air: $c_p = 1.005$ kJ/(kg$\cdot$K), $c_v = 0.718$ kJ/(kg$\cdot$K), $k = 1.4$, $R = 0.287$ kJ/(kg$\cdot$K).
+\item Use $c_v$ for const. volume, rigid container, or closed system with $\Delta u$.
+\item Use $c_p$ for const. pressure, steady-flow, or open system with $\Delta h$.
+\item Internal energy: $\Delta u = c_v(T_2 - T_1)$ depends only on $\Delta T$.
+\item Enthalpy: $\Delta h = c_p(T_2 - T_1)$ depends only on $\Delta T$.
+\item Check: $c_p = c_v + R$ (Mayer) and $k = c_p/c_v > 1$ always.
+\item For other gases: look up $c_p$, $c_v$, $R$, $k$ in tables.
+\item Look for: temperature change $\Delta T$, process type (const $p$ or $V$).
+\end{enumerate}
+
+%================================================
+\section*{5. Entropy \& Second Law}
+
+\textit{Entropy measures disorder/irreversibility. For any process: $\Delta S_{\text{univ}} \geq 0$. Reversible: $=$; Irreversible: $>$.}
+
+\textbf{Entropy change (any substance):}
+\[
+\Delta s = \int \frac{\delta q_{\text{rev}}}{T}
+\]
+
+\textbf{Tds relations:}
+\begin{align*}
+Tds &= du + p\,dv && \text{(from 1st + 2nd law)} \\
+Tds &= dh - v\,dp
+\end{align*}
+
+\textbf{Ideal gas (const. $c_p$, $c_v$):}
+\begin{align*}
+\Delta s &= c_p\ln\frac{T_2}{T_1} - R\ln\frac{p_2}{p_1} \\
+\Delta s &= c_v\ln\frac{T_2}{T_1} + R\ln\frac{v_2}{v_1}
+\end{align*}
+
+\textbf{Isentropic ($\Delta s = 0$) ideal gas:}
+\[
+\frac{T_2}{T_1} = \left(\frac{p_2}{p_1}\right)^{\frac{k-1}{k}} = \left(\frac{v_1}{v_2}\right)^{k-1}
+\]
+
+\textbf{Strategy -- Entropy:}
+\begin{enumerate}[nosep]
+\item For isentropic (reversible adiabatic): $\Delta s = 0$, $s_1 = s_2$.
+\item Use isentropic relations: $T_2/T_1 = (p_2/p_1)^{(k-1)/k} = (v_1/v_2)^{k-1}$ for ideal gas.
+\item For ideal gas: $\Delta s = c_p\ln(T_2/T_1) - R\ln(p_2/p_1)$ or $\Delta s = c_v\ln(T_2/T_1) + R\ln(v_2/v_1)$.
+\item For steam/water: look up $s_1$, $s_2$ from tables; $\Delta s = s_2 - s_1$.
+\item For irreversible: $\Delta s_{\text{gen}} > 0$ (entropy generation $\geq 0$).
+\item For cycles: $\Delta s_{\text{cycle}} = 0$ (returns to initial state).
+\item 2nd law: $\Delta S_{\text{universe}} = \Delta S_{\text{sys}} + \Delta S_{\text{surr}} \geq 0$.
+\item Look for: "isentropic", "reversible", "adiabatic", initial/final states.
+\end{enumerate}
+
+%================================================
+\section*{6. Pure Substances \& Quality}
+
+\textit{In the two-phase region, $T$ and $p$ are not independent. Quality $x$ = mass fraction of vapor. Use tables with $T$ or $p$ to find $v_f$, $v_g$, $h_f$, $h_g$, etc.}
+
+\textbf{If $v_f < v < v_g$ (saturated mixture):}
+\begin{align*}
+x &= \frac{v - v_f}{v_{fg}} && \text{quality (0 = sat. liquid, 1 = sat. vapor)} \\
+u &= u_f + x\cdot u_{fg} && \text{mixture internal energy} \\
+h &= h_f + x\cdot h_{fg} && \text{mixture enthalpy} \\
+s &= s_f + x\cdot s_{fg} && \text{mixture entropy}
+\end{align*}
+
+\textit{$v_{fg} = v_g - v_f$, etc. Subscript $f$ = saturated liquid; $g$ = saturated vapor.}
+
+\textbf{Compressed liquid:} $u \approx u_f(T)$, $h \approx h_f(T)$, $v \approx v_f(T)$
+
+\textbf{Superheated vapor:} Use superheat tables with $(p, T)$.
+
+\textbf{Strategy -- Steam Tables:}
+\begin{enumerate}[nosep]
+\item At given $p$ (or $T$), look up sat. properties: $T_{\text{sat}}$, $v_f$, $v_g$, $h_f$, $h_g$, $s_f$, $s_g$.
+\item Calc $v_{fg} = v_g - v_f$, $h_{fg} = h_g - h_f$, $s_{fg} = s_g - s_f$.
+\item Compare given property to saturation values to determine phase:
+  \begin{itemize}[nosep]
+  \item $v < v_f$ (or $T < T_{\text{sat}}$ at given $p$): compressed liquid
+  \item $v_f \leq v \leq v_g$ (or $T = T_{\text{sat}}$ at given $p$): two-phase mixture
+  \item $v > v_g$ (or $T > T_{\text{sat}}$ at given $p$): superheated vapor
+  \end{itemize}
+\item For two-phase mixture (quality $x$, where $0 \leq x \leq 1$):
+  \begin{itemize}[nosep]
+  \item Calc quality: $x = (v - v_f)/v_{fg}$ or $x = (h - h_f)/h_{fg}$ or $x = (s - s_f)/s_{fg}$
+  \item Find properties: $h = h_f + xh_{fg}$, $u = u_f + xu_{fg}$, $s = s_f + xs_{fg}$
+  \end{itemize}
+\item For compressed liquid: approx. as sat. liquid at same $T$: $h \approx h_f(T)$, $v \approx v_f(T)$.
+\item For superheated: look up in superheat tables at $(p, T)$; interpolate if needed.
+\item Look for: pressure $p$, temperature $T$, $v$, $h$, $u$, or $s$ to fix state.
+\end{enumerate}
+
+\textbf{Strategy -- Throttling Calorimeter:}
+\begin{enumerate}[nosep]
+\item Throttling process: $h_1 = h_2$ (isenthalpic).
+\item At exit (low $p$, measured $T$): look up $h_2$ in superheat tables.
+\item At inlet (high $p$, two-phase): $h_1 = h_f + xh_{fg}$ at inlet pressure.
+\item Solve for inlet quality: $x = (h_1 - h_f)/h_{fg} = (h_2 - h_f)/h_{fg}$.
+\end{enumerate}
+
+%================================================
+\section*{7. Steady-Flow Energy (CV)}
+
+\textit{For steady flow: no accumulation in CV. Energy in = energy out. Enthalpy $h$ appears because flow work ($pv$) is included.}
+
+\[
+\dot{Q} - \dot{W} = \dot{m}\left[(h_2 - h_1) + \frac{V_2^2 - V_1^2}{2} + g(z_2 - z_1)\right]
+\]
+
+\textbf{Common devices (adiabatic, $\dot{Q} = 0$):}
+\begin{align*}
+h_1 + \frac{V_1^2}{2} &= h_2 + \frac{V_2^2}{2} && \text{nozzle/diffuser (no work)} \\
+\dot{W}_{\text{out}} &= \dot{m}(h_1 - h_2) && \text{turbine (KE/PE negl.)} \\
+\dot{W}_{\text{in}} &= \dot{m}(h_2 - h_1) && \text{compressor (KE/PE negl.)} \\
+h_1 &= h_2 && \text{throttle (no work, KE/PE negl.)}
+\end{align*}
+
+\textbf{Adiabatic mixing:}
+\[
+\sum \dot{m}_{\text{in}}h_{\text{in}} = \dot{m}_{\text{out}}h_{\text{out}}
+\]
+
+\textbf{Strategy -- Steady-Flow Devices:}
+\begin{enumerate}[nosep]
+\item Draw CV around device; ID all inlets and outlets.
+\item Apply mass: $\sum\dot{m}_{\text{in}} = \sum\dot{m}_{\text{out}}$; single stream: $\dot{m}_1 = \dot{m}_2$.
+\item Write SFEE: $\dot{Q} - \dot{W} = \dot{m}[(h_2-h_1) + (V_2^2-V_1^2)/2 + g(z_2-z_1)]$.
+\item Apply device assumptions:
+  \begin{itemize}[nosep]
+  \item \textbf{Turbine:} $\dot{Q}=0$, KE/PE negl. $\to$ $\dot{W}_{\text{out}} = \dot{m}(h_1-h_2)$; $\eta_t = W_{\text{actual}}/W_{\text{isen}}$
+  \item \textbf{Compressor:} $\dot{Q}=0$, KE/PE negl. $\to$ $\dot{W}_{\text{in}} = \dot{m}(h_2-h_1)$; $\eta_c = W_{\text{isen}}/W_{\text{actual}}$
+  \item \textbf{Pump:} same as compressor (liquid)
+  \item \textbf{Nozzle:} $\dot{W}=0$, $\dot{Q}=0$ $\to$ $h_1 + V_1^2/2 = h_2 + V_2^2/2$; exit $V_2 \gg V_1$
+  \item \textbf{Diffuser:} same as nozzle; exit $V_2 \ll V_1$, pressure increases
+  \item \textbf{Throttle:} $\dot{W}=0$, $\dot{Q}=0$, KE/PE negl. $\to$ $h_1 = h_2$ (isenthalpic)
+  \item \textbf{Heat exchanger:} $\dot{W}=0$, KE/PE negl. $\to$ $\dot{Q} = \dot{m}(h_2 - h_1)$
+  \item \textbf{Mixer:} $\dot{W}=0$, $\dot{Q}=0$ $\to$ $\dot{m}_1h_1 + \dot{m}_2h_2 = \dot{m}_3h_3$
+  \end{itemize}
+\item For ideal gas: $\Delta h = c_p\Delta T$; use $c_p$ for air (1.005 kJ/kg$\cdot$K).
+\item For steam: use tables to find $h$ at states; may need quality or superheat tables.
+\item Isentropic process: $s_1 = s_2$; use for ideal (reversible) work calculation.
+\item Look for: device type, $\dot{m}$, inlet/outlet states, efficiency $\eta$, power $\dot{W}$.
+\end{enumerate}
+
+%================================================
+\section*{8. Thermodynamic Cycles}
+
+\textit{A cycle returns to initial state: $\Delta E_{\text{cycle}} = 0$, so $Q_{\text{net}} = W_{\text{net}}$.}
+
+\textbf{Power cycle efficiency:}
+\[
+\eta_{\text{th}} = \frac{W_{\text{net,out}}}{Q_{\text{in}}} = 1 - \frac{Q_{\text{out}}}{Q_{\text{in}}}
+\]
+
+\textbf{Refrigerator/Heat Pump COP:}
+\begin{align*}
+\text{COP}_R &= \frac{Q_L}{W_{\text{in}}} && \text{(cooling effect / work)} \\
+\text{COP}_{\text{HP}} &= \frac{Q_H}{W_{\text{in}}} = \text{COP}_R + 1
+\end{align*}
+
+\textbf{Carnot limits (max possible):}
+\begin{align*}
+\eta_{\text{Carnot}} &= 1 - \frac{T_L}{T_H} \\
+\text{COP}_{R,C} &= \frac{T_L}{T_H - T_L}, \quad \text{COP}_{\text{HP},C} = \frac{T_H}{T_H - T_L}
+\end{align*}
+\textit{Use absolute temperatures (K).}
+
+\textbf{Strategy -- Thermodynamic Cycles:}
+\begin{enumerate}[nosep]
+\item For each process (1$\to$2, 2$\to$3, etc.), apply 1st law: $Q - W = \Delta U$ (closed) or SFEE (open).
+\item Use process constraints:
+  \begin{itemize}[nosep]
+  \item Isochoric ($V=$const): $W = 0$, $Q = m c_v \Delta T$
+  \item Isobaric ($p=$const): $W = p\Delta V$, $Q = m c_p \Delta T$
+  \item Isothermal ($T=$const, ideal gas): $\Delta U = 0$, $Q = W = mRT\ln(V_2/V_1)$
+  \item Adiabatic: $Q = 0$, $W = -\Delta U$
+  \item Isentropic: $\Delta s = 0$, reversible adiabatic; use $T_2/T_1 = (p_2/p_1)^{(k-1)/k}$
+  \end{itemize}
+\item Over full cycle: $\sum\Delta U = 0$ (returns to start), so $Q_{\text{net}} = W_{\text{net}}$.
+\item Identify $Q_{\text{in}}$ = sum of all heat additions (where $Q > 0$).
+\item Identify $Q_{\text{out}}$ = magnitude of heat rejections (where $Q < 0$).
+\item Power cycle: $\eta_{\text{th}} = W_{\text{net}}/Q_{\text{in}} = 1 - Q_{\text{out}}/Q_{\text{in}}$ (always $< 1$).
+\item Refrigerator: $\text{COP}_R = Q_L/W_{\text{net,in}}$ where $Q_L$ = heat removed from cold space.
+\item Heat pump: $\text{COP}_{\text{HP}} = Q_H/W_{\text{net,in}}$ where $Q_H$ = heat delivered; $\text{COP}_{\text{HP}} = \text{COP}_R + 1$.
+\item Carnot limits: $\eta_{\text{Carnot}} = 1 - T_L/T_H$; $\text{COP}_{R,C} = T_L/(T_H - T_L)$; use K.
+\item Look for: cycle type (Otto, Rankine, refrigeration), $T_H$, $T_L$, process types.
+\end{enumerate}
+
+%================================================
+\section*{9. Quick Reference -- Thermo}
+
+\begin{tabular}{@{}ll@{}}
+$R_u$ & $8.314$ kJ/(kmol$\cdot$K) \\
+$R_{\text{air}}$ & $0.287$ kJ/(kg$\cdot$K) = 287 J/(kg$\cdot$K) \\
+$c_{p,\text{air}}$ & $1.005$ kJ/(kg$\cdot$K) \\
+$c_{v,\text{air}}$ & $0.718$ kJ/(kg$\cdot$K) \\
+$k_{\text{air}}$ & $1.4$ \\
+$T$(K) & $T(^\circ\text{C}) + 273.15$ \\
+\end{tabular}
+
+\textbf{Unit Conversions -- Thermo:}
+\begin{itemize}[nosep]
+\item 1 kJ = 1000 J = 1 kPa$\cdot$m$^3$
+\item 1 J = 1 N$\cdot$m = 1 Pa$\cdot$m$^3$
+\item 1 kW = 1 kJ/s
+\item 1 bar = 100 kPa
+\item Energy: J, kJ; Power: W, kW
+\end{itemize}
+
+\textbf{Common Errors -- Thermo:}
+\begin{itemize}[nosep]
+\item Using $^\circ$C instead of K in gas law or Carnot.
+\item Forgetting gauge $\to$ absolute pressure.
+\item Sign errors: $Q > 0$ into system; $W > 0$ out of system.
+\item Confusing specific (per kg) with total properties.
+\item Using $c_p$ when should use $c_v$ (or vice versa).
+\item Quality formula needs sat. data at same $p$ or $T$.
+\item Wrong phase ID (compressed liq vs mixture vs superheat).
+\item For cycles: $\eta$ uses $Q_{\text{in}}$, not $Q_{\text{net}}$.
+\end{itemize}
+
+\end{multicols*}
+
+\end{document}
